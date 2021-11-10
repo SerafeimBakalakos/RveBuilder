@@ -23,7 +23,7 @@ namespace RveBuilder.Builders
 
 		public int NumIntegrationPointsMC { get; set; } = 1000000;
 
-		public int NumTriesPerInclusion { get; set; } = 50;
+		public int NumTriesPerInclusion { get; set; } = 100;
 
 		public double RadiusMin { get; set; }
 		public double RadiusMax { get; set; }
@@ -35,6 +35,7 @@ namespace RveBuilder.Builders
 		public (List<Sphere3D> inclusions, double actualVolumeFraction) GenerateInclusions()
 		{
 			double actualVolumeFraction = 0;
+			double rveVolume = (CoordsMax[0] - CoordsMin[0]) * (CoordsMax[1] - CoordsMin[1]) * (CoordsMax[2] - CoordsMin[2]);
 			var inclusions = new List<Sphere3D>();
 			var rng = new Random(Seed);
 			var domain = new Brick3D(CoordsMin, CoordsMax);
@@ -73,12 +74,12 @@ namespace RveBuilder.Builders
 				SphereBrickIntersection.RelativePosition pos = intersection.FindRelativePosition(domain, sphere);
 				if (pos == SphereBrickIntersection.RelativePosition.SphereInsideBrick)
 				{
-					actualVolumeFraction += sphere.Volume();
+					actualVolumeFraction += sphere.Volume() / rveVolume;
 				}
 				else
 				{
 					Debug.Assert(pos == SphereBrickIntersection.RelativePosition.PartialIntersection);
-					actualVolumeFraction += intersection.EstimateIntersectionVolume(domain, sphere);
+					actualVolumeFraction += intersection.EstimateIntersectionVolume(domain, sphere) / rveVolume;
 				}
 			}
 			return (inclusions, actualVolumeFraction);

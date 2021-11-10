@@ -18,9 +18,10 @@ namespace RveBuilder.Tests
 			double[] maxCoords = { +1, +1, +1 };
 			double minRadius = 0.1;
 			double maxRadius = 0.2;
-			double targetVF = 0.5;
+			double targetVF = 0.25;
 			var rveBuilder = new SphericalInclusionsRveBuilder(minCoords, maxCoords, minRadius, maxRadius, targetVF);
 			rveBuilder.Seed = 1;
+			rveBuilder.NumTriesPerInclusion = 100;
 			(List<Sphere3D> inclusions, double actualVolumeFraction) = rveBuilder.GenerateInclusions();
 			var writer = new GmshCompositeWriter(minCoords, maxCoords, inclusions, actualVolumeFraction);
 			writer.NumCircleDiscretizationPoints = 12;
